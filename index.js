@@ -31,11 +31,11 @@ function displaySuccess(filename) {
 
 (async () => {
     const ig = new IgApiClient();
-    const username = 'willvasconceloscpp'; // Substitua pelo seu nome de usuário do Instagram
-    const password = '86268432@Nea'; // Substitua pela sua senha do Instagram
+    const username = ''; // Substitua pelo seu nome de usuário do Instagram
+    const password = ''; // Substitua pela sua senha do Instagram
     
     // URL do perfil do Instagram (definida diretamente no código)
-    const profileUrl = 'https://www.instagram.com/fornecedoresexclusivos5/'; // Substitua pela URL do perfil desejado
+    const profileUrl = 'https://www.instagram.com//'; // Substitua pela URL do perfil desejado
     const profileUsername = profileUrl.split('/')[3];
     
 
@@ -45,50 +45,40 @@ function displaySuccess(filename) {
         await ig.account.login(username, password);
         console.log(`✅ Logado no Instagram como ${username}`.blue);
 
-        // Obtém o ID do usuário do perfil
         const userId = await ig.user.getIdByUsername(profileUsername);
         console.log(`🔍 Acessando o perfil de @${profileUsername}...`.blue);
 
-        // Cria uma pasta para salvar os arquivos
         const folderPath = path.join(__dirname, profileUsername);
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath);
         }
-
-        // Obtém o feed de posts do usuário
         const feed = ig.feed.user(userId);
         let posts = [];
         let page = 1;
 
         console.log('⏳ Carregando todas as publicações...'.blue);
 
-        // Itera sobre todas as páginas de posts
         do {
             console.log(`📄 Carregando página ${page}...`.blue);
             const newPosts = await feed.items();
             posts = posts.concat(newPosts);
             page++;
-        } while (feed.isMoreAvailable()); // Continua enquanto houver mais posts
+        } while (feed.isMoreAvailable()); s
 
         console.log(`✅ Total de publicações carregadas: ${posts.length}`.blue);
-
-        // Itera sobre os posts e baixa apenas os Reels (vídeos)
         let reelCount = 0;
         for (let i = 0; i < posts.length; i++) {
             const post = posts[i];
 
-            // Verifica se o post é um vídeo (Reel)
+        
             if (post.video_versions) {
                 const mediaUrl = post.video_versions[0].url;
                 const filename = path.join(folderPath, `reel_${reelCount + 1}.mp4`);
 
-                // Exibe o status de loading
                 displayLoading(filename);
 
                 try {
-                    // Baixa o arquivo
                     await downloadFile(mediaUrl, filename);
-                    // Exibe o status de sucesso
                     displaySuccess(filename);
                     reelCount++;
                 } catch (error) {
